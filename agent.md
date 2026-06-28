@@ -37,6 +37,10 @@ from config import PROXY
 from utils import Utils
 ```
 
+## 📤 Git 提交规范
+- 提交前必须将 commit 描述提交给用户审阅，经用户同意后方可执行 `git commit`
+- 自动生成的修改说明需列出涉及的文件和变更摘要
+
 ## 🧹 整理项目规范
 - **严禁**操作 `.gitignore` 中指定的文件/目录（output/、logs/、temp/、__pycache__/ 等）
 - 整理项目只检查 git status，确认需要提交的代码文件无遗漏
