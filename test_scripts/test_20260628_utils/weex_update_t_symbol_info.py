@@ -45,16 +45,6 @@ def main():
     rank_data = load_jsonc(data_file)
     print(f"读取到 {len(rank_data)} 条数据")
 
-    # 从元数据构建 symbol_name -> symbol_code 映射
-    metadata_file = os.path.join(data_output_dir, "weex_metadata_contractList.jsonc")
-    metadata_map = {}
-    if os.path.isfile(metadata_file):
-        metadata_list = load_jsonc(metadata_file)
-        metadata_map = {item["symbol_name"]: item.get("symbol_code", "") for item in metadata_list}
-        print(f"从元数据加载 {len(metadata_map)} 条 symbol_code 映射")
-    else:
-        print(f"警告: 元数据文件不存在 {metadata_file}，f_coin_code 将为 ''")
-
     platf_name = "WEEX"
 
     # 连接数据库查询现有记录
@@ -84,12 +74,11 @@ def main():
             latest_price = float(item["price"])
             float_count = item["float_count"]
             set_amount_ratio = item.get("contract_size", "-1.0")
+            coin_code = item.get("symbol_code", "")
 
             # 计算 ajust_base_value (对应参考函数中的计算逻辑)
             ajust_base_value = latest_price * 0.0006 * 4 * 0.205
             ajust_base_value_str = Utils.format_float(ajust_base_value, 15)
-
-            coin_code = metadata_map.get(symbol_name, "")
 
             if symbol_name in symbol_db_map:
                 # 已存在 → UPDATE
