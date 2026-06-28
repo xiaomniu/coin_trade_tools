@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp / logs / output should not be tracked
+test_scripts/temp/
+test_scripts/output/
+test_scripts/logs/
+test_scripts/*/output/
+test_scripts/*/logs/
+*.tmp
+*.log
