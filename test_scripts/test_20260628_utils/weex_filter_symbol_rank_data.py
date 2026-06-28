@@ -95,6 +95,7 @@ def main():
             "binance_symbol": sym,
             "binance_price": b["lastPrice"],
             "binance_rank": b["priceChangePercent"],
+            "contract_size": "-1.0",
             "_sort_key": binance_chg,
         })
 
@@ -116,7 +117,7 @@ def main():
         f"// WEEX 数据量:    {len(weex_data)} 个",
         f"// 共同 symbol 数: {len(result)} 个",
         "// 格式: symbol / close_price / rank / float_count / price / size",
-        "//        coin_name / binance_symbol / binance_price / binance_rank",
+        "//        coin_name / binance_symbol / binance_price / binance_rank / contract_size",
         "// 排序: 按 binance_priceChangePercent 从大到小",
         "// ============================================================",
         "", body, "",
