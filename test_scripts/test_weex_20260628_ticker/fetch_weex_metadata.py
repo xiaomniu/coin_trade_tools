@@ -9,7 +9,7 @@ import requests, json, os, sys
 from datetime import datetime, timezone, timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from config import PROXY
+from config import PROXY, ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE
 
 
 def fetch_weex_metadata(proxy=None):
@@ -53,6 +53,13 @@ def fetch_weex_metadata(proxy=None):
     except Exception as e:
         print(f"[ERROR] {e}")
         return None
+
+
+def _parent_outdir():
+    """test_scripts/output/ 公共输出目录"""
+    d = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "output"))
+    os.makedirs(d, exist_ok=True)
+    return d
 
 
 def main():
@@ -107,6 +114,7 @@ def main():
         lines2 = [
             "// ============================================================",
             "// WEEX contractList 精简版",
+            f"// 请求时间: {now} (Asia/Shanghai)",
             "// 字段:     symbol_code / symbol_01 / symbol_02 / coin_name / symbol_name",
             f"// 数据量:   {len(simple)} 个交易对",
             "// ============================================================",
@@ -116,9 +124,35 @@ def main():
             f.write("\n".join(lines2))
         print(f"[精简] {fp2}")
 
-        # 同步 symbol_code 到数据库
+        # 额外保存一份无时间戳的副本到 test_scripts/output/
+        parent_out = _parent_outdir()
+        fp3 = os.path.join(parent_out, "weex_metadata_contractList.jsonc")
+        with open(fp3, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines2))
+        print(f"[公共] {fp3}")
+
+        # 同步 symbol_code 到数据库（仅同步 rank 数据中存在的 symbol）
         print("\n同步 symbol_code 到数据库 ...")
-        update_symbol_coin_code_to_db(simple)
+        # 读取 weex_filter_symbol_rank_data.jsonc 中的 symbol 集合
+        rank_file = os.path.join(parent_out, "weex_filter_symbol_rank_data.jsonc")
+        rank_symbols = set()
+        if os.path.isfile(rank_file):
+            with open(rank_file, "r", encoding="utf-8") as f:
+                rank_lines = [l for l in f if not l.strip().startswith("//")]
+            rank_data = json.loads("".join(rank_lines))
+            rank_symbols = {item["symbol"] for item in rank_data}
+            print(f"  rank 文件中有 {len(rank_symbols)} 个 symbol")
+        else:
+            print(f"  警告: rank 文件不存在 {rank_file}，将同步全部数据")
+
+        # 过滤 simple，只保留 symbol_name 在 rank_symbols 中的
+        filtered = [item for item in simple if item.get("symbol_name") in rank_symbols]
+        print(f"  过滤后: {len(filtered)}/{len(simple)} 条需要同步")
+
+        if ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE:
+            update_symbol_coin_code_to_db(filtered)
+        else:
+            print("  ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE=False，跳过数据库操作")
 
     # 简要输出
     if isinstance(data, dict):
@@ -153,9 +187,13 @@ def update_symbol_coin_code_to_db(contract_list):
             if len(row) >= 2:
                 symbol_db_map[row[1]] = row[0]  # f_symbol -> f_id
 
+        total = len(contract_list)
         sql_lines = []  # 收集 SQL 语句
 
-        for item in contract_list:
+        for idx, item in enumerate(contract_list, 1):
+            if idx % 100 == 0 or idx == total:
+                print(f"  进度: {idx}/{total}", end="\r" if idx < total else "\n")
+
             symbol_name = item.get("symbol_name")
             symbol_code = item.get("symbol_code")
             symbol_01 = item.get("symbol_01", "")  # 如 "BTC/USDT"

@@ -19,8 +19,8 @@ test_xxx/
 - 输出文件必须带平台前缀：
   - Binance: `binance_ticker_*.jsonc`
   - WEEX: `weex_ticker_*.jsonc`、`weex_metadata_*.jsonc`
-- 时间戳文件存于模块自身 `output/`
-- 无时间戳固定名副本存于 `test_scripts/output/`（供后续处理引用）
+- 输出文件默认存于脚本自身目录的 `output/`，日志存于 `logs/`
+- 只有明确指定需要公共引用时，才写入 `test_scripts/output/`（固定名、去时间戳）
 
 ## ⚙️ 公共模块
 | 文件 | 用途 |

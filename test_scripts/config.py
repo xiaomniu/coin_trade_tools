@@ -27,6 +27,9 @@ DB_CONFIG = {
     },
 }
 
+# 是否启用数据库 symbol_code 更新
+ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE = False  # 改为 True 后 fetch_weex_metadata.py 才会执行数据库更新
+
 # 可在此添加其他公共配置参数
 # REQUEST_TIMEOUT = 30
 # TZ_NAME = "Asia/Shanghai"

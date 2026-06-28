@@ -45,6 +45,16 @@ def main():
     binance_map = {item["symbol"]: item for item in binance_data}
     weex_map = {item["symbol"]: item for item in weex_data}
 
+    # 从元数据构建 symbol_name -> symbol_code 映射
+    metadata_file = os.path.join(output_dir, "weex_metadata_contractList.jsonc")
+    metadata_map = {}
+    if os.path.isfile(metadata_file):
+        metadata_list = load_jsonc(metadata_file)
+        metadata_map = {item["symbol_name"]: item.get("symbol_code", "") for item in metadata_list}
+        print(f"从元数据加载 {len(metadata_map)} 条 symbol_code 映射")
+    else:
+        print(f"警告: 元数据文件不存在 {metadata_file}，symbol_code 将为 ''")
+
     # 取交集
     common_symbols = set(binance_map.keys()) & set(weex_map.keys())
     if not common_symbols:
@@ -84,13 +94,16 @@ def main():
 
         binance_chg = float(b["priceChangePercent"])
 
+        weex_symbol = "cmt_" + coin_name.lower() + "usdt"
+
         result.append({
-            "symbol": "cmt_" + coin_name.lower() + "usdt",
+            "symbol": weex_symbol,
             "close_price": Utils.format_float(close_price),
             "rank": "{:.3f}".format(rank),
             "float_count": str(float_count),
             "price": last_price,
             "size": size,
+            "symbol_code": metadata_map.get(weex_symbol, ""),
             "coin_name": coin_name,
             "binance_symbol": sym,
             "binance_price": b["lastPrice"],
@@ -116,7 +129,7 @@ def main():
         f"// Binance 数据量: {len(binance_data)} 个",
         f"// WEEX 数据量:    {len(weex_data)} 个",
         f"// 共同 symbol 数: {len(result)} 个",
-        "// 格式: symbol / close_price / rank / float_count / price / size",
+        "// 格式: symbol / close_price / rank / float_count / price / size / symbol_code",
         "//        coin_name / binance_symbol / binance_price / binance_rank / contract_size",
         "// 排序: 按 binance_priceChangePercent 从大到小",
         "// ============================================================",
