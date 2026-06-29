@@ -47,6 +47,9 @@ WEEX_IGNORE_SYMBOLS = [
     "cmt_carvusdt",
 ]
 
+# 全局 SQL 执行开关（作用于所有脚本中 cursor.execute/conn.commit/conn.rollback）
+ALLOW_EXECUTE_SQL = False  # 改为 True 后去除 TODO 标记的 SQL 才会实际执行
+
 # 可在此添加其他公共配置参数
 # REQUEST_TIMEOUT = 30
 # TZ_NAME = "Asia/Shanghai"

@@ -13,6 +13,7 @@ import json, os, sys
 from datetime import datetime, timezone, timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from config import ALLOW_EXECUTE_SQL
 from db import connect_mysql_db, DB_TYPE_HOST_DDBB
 from utils import Utils
 
@@ -329,9 +330,11 @@ def main():
             sql_lines.append(f"-- [{symbol_name}]  {f_a_symbol}")
             sql_lines.append(sql_str)
             sql_lines.append("")
-            # cursor.execute(sql_str)  # TODO: 需要执行时取消注释
+            if ALLOW_EXECUTE_SQL:
+                cursor.execute(sql_str)
 
-        # conn.commit()  # TODO: 需要执行时取消注释
+        if ALLOW_EXECUTE_SQL:
+            conn.commit()
 
         print(f"UPDATE: {update_count} 条")
         print(f"INSERT: {insert_count} 条")
@@ -339,7 +342,8 @@ def main():
 
     except Exception as e:
         print(f"[DB ERROR] {e}")
-        # conn.rollback()  # TODO: 需要执行时取消注释
+        if ALLOW_EXECUTE_SQL:
+            conn.rollback()
     finally:
         cursor.close()
         conn.close()

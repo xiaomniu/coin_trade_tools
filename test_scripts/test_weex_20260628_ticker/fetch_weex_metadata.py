@@ -9,7 +9,7 @@ import requests, json, os, sys
 from datetime import datetime, timezone, timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from config import PROXY, ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE
+from config import PROXY, ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE, ALLOW_EXECUTE_SQL
 
 
 def fetch_weex_metadata(proxy=None):
@@ -223,9 +223,11 @@ def update_symbol_coin_code_to_db(contract_list):
                 ).format("WEEX", symbol_name, symbol_code, "1.0", "1.0", "", "", "")
 
             sql_lines.append(f"[{symbol_name}] {sql_str}")
-            # cursor.execute(sql_str)  # TODO: 需要执行时取消注释
+            if ALLOW_EXECUTE_SQL:
+                cursor.execute(sql_str)
 
-        # conn.commit()  # TODO: 需要执行时取消注释
+        if ALLOW_EXECUTE_SQL:
+            conn.commit()
         print(f"\n同步完成，共处理 {len(contract_list)} 条")
 
         # 将 SQL 语句保存到文件
