@@ -18,7 +18,7 @@ scripts = [
     (os.path.join(root, "test_weex_20260628_ticker", "fetch_weex_metadata.py"), "获取 WEEX symbol_code 信息"),
     (os.path.join(root, "test_weex_20260628_ticker", "fetch_weex_ticker.py"), "获取 WEEX ticker 信息"),
     (os.path.join(root, "test_binance_20260628_ticker", "fetch_binance_ticker.py"), "获取 Binance ticker 信息"),
-    (os.path.join(root, "test_20260628_utils", "weex_filter_symbol_rank_data.py"), "生成 weex_filter_symbol_rank_data.jsonc"),
+    (os.path.join(root, "test_weex_20260628_ticker", "weex_filter_symbol_rank_data.py"), "生成 weex_filter_symbol_rank_data.jsonc"),
 ]
 
 for i, (script, desc) in enumerate(scripts, 1):

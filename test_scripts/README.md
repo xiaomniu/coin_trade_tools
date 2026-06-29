@@ -23,14 +23,14 @@ test_scripts/
 │   ├── fetch_weex_ticker.py
 │   ├── fetch_weex_metadata.py
 │   ├── weex_sort_24hr_rank_data.py
+│   ├── weex_run.py                     # 一键生成 rank 数据
+│   ├── weex_filter_symbol_rank_data.py # WEEX rank 数据生成
+│   ├── weex_update_t_symbol_info.py    # 更新 t_symbol_info
+│   ├── weex_update_t_trade_platf_set.py # 更新 t_trade_platf_set
 │   ├── clean_output.py
 │   └── output/
 ├── test_20260628_utils/               # 工具类模块
-│   ├── clean_output.py                     # 清理本目录 output/logs
-│   ├── weex_run.py                         # 一键生成 rank 数据
-│   ├── weex_filter_symbol_rank_data.py     # WEEX rank 数据生成
-│   ├── weex_update_t_symbol_info.py        # 更新 t_symbol_info
-│   └── weex_update_t_trade_platf_set.py    # 更新 t_trade_platf_set
+│   ├── clean_output.py                # 清理本目录 output/logs
 └── <新模块>/                          # 按此规范建目录
     ├── xxx.py
     ├── clean_output.py
@@ -46,10 +46,10 @@ test_scripts/
 | `test_weex_20260628_ticker/` | `fetch_weex_ticker.py` | 请求 WEEX 合约 24hr 行情 |
 | `test_weex_20260628_ticker/` | `fetch_weex_metadata.py` | 请求 WEEX 合约元数据，生成 SQL |
 | `test_weex_20260628_ticker/` | `weex_sort_24hr_rank_data.py` | 将 rank 数据按行输出为紧凑 JSON txt |
-| `test_20260628_utils/` | `weex_run.py` | 一键执行全流程生成 rank 数据 |
-| `test_20260628_utils/` | `weex_filter_symbol_rank_data.py` | 提取共同 symbol 并生成 WEEX rank 数据 |
-| `test_20260628_utils/` | `weex_update_t_symbol_info.py` | 将 rank 数据更新到 t_symbol_info |
-| `test_20260628_utils/` | `weex_update_t_trade_platf_set.py` | 将 rank 数据处理后更新到 t_trade_platf_set |
+| `test_weex_20260628_ticker/` | `weex_run.py` | 一键执行全流程生成 rank 数据 |
+| `test_weex_20260628_ticker/` | `weex_filter_symbol_rank_data.py` | 提取共同 symbol 并生成 WEEX rank 数据 |
+| `test_weex_20260628_ticker/` | `weex_update_t_symbol_info.py` | 将 rank 数据更新到 t_symbol_info |
+| `test_weex_20260628_ticker/` | `weex_update_t_trade_platf_set.py` | 将 rank 数据处理后更新到 t_trade_platf_set |
 
 ## ⚙️ 公共模块
 
