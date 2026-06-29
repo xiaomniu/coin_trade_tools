@@ -25,7 +25,9 @@ test_scripts/
 │   ├── clean_output.py
 │   └── output/
 ├── test_20260628_utils/               # 工具类模块
-│   └── weex_filter_symbol_rank_data.py # WEEX rank 数据生成
+│   ├── weex_filter_symbol_rank_data.py     # WEEX rank 数据生成
+│   ├── weex_update_t_symbol_info.py        # 更新 t_symbol_info
+│   └── weex_update_t_trade_platf_set.py    # 更新 t_trade_platf_set
 └── <新模块>/                          # 按此规范建目录
     ├── xxx.py
     ├── clean_output.py
@@ -41,6 +43,8 @@ test_scripts/
 | `test_weex_20260628_ticker/` | `fetch_weex_ticker.py` | 请求 WEEX 合约 24hr 行情 |
 | `test_weex_20260628_ticker/` | `fetch_weex_metadata.py` | 请求 WEEX 合约元数据，生成 SQL |
 | `test_20260628_utils/` | `weex_filter_symbol_rank_data.py` | 提取共同 symbol 并生成 WEEX rank 数据 |
+| `test_20260628_utils/` | `weex_update_t_symbol_info.py` | 将 rank 数据更新到 t_symbol_info |
+| `test_20260628_utils/` | `weex_update_t_trade_platf_set.py` | 将 rank 数据处理后更新到 t_trade_platf_set |
 
 ## ⚙️ 公共模块
 

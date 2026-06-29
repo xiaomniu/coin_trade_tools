@@ -76,7 +76,7 @@ def main():
             set_amount_ratio = item.get("contract_size", "-1.0")
             coin_code = item.get("symbol_code", "")
 
-            # 计算 ajust_base_value (对应参考函数中的计算逻辑)
+            # 计算 ajust_base_value (  对应参考函数中的计算逻辑) # "自动微调基准值"
             ajust_base_value = latest_price * 0.0006 * 4 * 0.205
             ajust_base_value_str = Utils.format_float(ajust_base_value, 15)
 
