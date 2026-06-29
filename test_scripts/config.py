@@ -30,6 +30,23 @@ DB_CONFIG = {
 # 是否启用数据库 symbol_code 更新
 ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE = False  # 改为 True 后 fetch_weex_metadata.py 才会执行数据库更新
 
+# 是否清理 test_scripts 根目录的 output / logs（clean_all_output.py 会读取）
+ENABLE_CLEAN_ROOT_OUTPUT = False  # 改为 True 后 clean_all_output 才会清理公共 output/logs
+
+# WEEX 忽略的 symbol 列表（不参与 rank 数据生成）
+WEEX_IGNORE_SYMBOLS = [
+    "cmt_我踏马来了usdt",
+    "cmt_\u00b1\u201c\u221e\u2264\u00bb\u00e0\u2026\u02d9usdt",
+    "cmt_币安人生usdt",
+    "cmt_老子usdt",
+    "cmt_basusdt",
+    "cmt_glwusdt",
+    "cmt_labusdt",
+    "cmt_beusdt",
+    "cmt_blessusdt",
+    "cmt_carvusdt",
+]
+
 # 可在此添加其他公共配置参数
 # REQUEST_TIMEOUT = 30
 # TZ_NAME = "Asia/Shanghai"

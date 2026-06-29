@@ -12,6 +12,7 @@ import json, os, sys
 from datetime import datetime, timezone, timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from config import WEEX_IGNORE_SYMBOLS
 from utils import Utils
 
 
@@ -61,6 +62,9 @@ def main():
         print("没有找到共同的 symbol")
         return
 
+    # 忽略列表
+    ignore_set = set(WEEX_IGNORE_SYMBOLS)
+
     # 处理成目标格式，并按 binance_priceChangePercent 降序排序
     result = []
     for sym in common_symbols:
@@ -95,6 +99,9 @@ def main():
         binance_chg = float(b["priceChangePercent"])
 
         weex_symbol = "cmt_" + coin_name.lower() + "usdt"
+
+        if weex_symbol in ignore_set:
+            continue
 
         result.append({
             "symbol": weex_symbol,

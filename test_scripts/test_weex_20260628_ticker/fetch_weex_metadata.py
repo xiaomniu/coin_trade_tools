@@ -146,7 +146,10 @@ def main():
             print(f"  警告: rank 文件不存在 {rank_file}，将同步全部数据")
 
         # 过滤 simple，只保留 symbol_name 在 rank_symbols 中的
-        filtered = [item for item in simple if item.get("symbol_name") in rank_symbols]
+        if rank_symbols:
+            filtered = [item for item in simple if item.get("symbol_name") in rank_symbols]
+        else:
+            filtered = simple
         print(f"  过滤后: {len(filtered)}/{len(simple)} 条需要同步")
 
         if ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE:

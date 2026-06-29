@@ -3,26 +3,31 @@
 用法: python clean_all_output.py
 """
 
-import os, shutil
+import os, shutil, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from config import ENABLE_CLEAN_ROOT_OUTPUT
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
-# 1. 清理公共 output / logs
-for folder in ("output", "logs"):
-    path = os.path.join(script_dir, folder)
-    if os.path.isdir(path):
-        for f in os.listdir(path):
-            fp = os.path.join(path, f)
-            try:
-                if os.path.isfile(fp):
-                    os.remove(fp)
-                elif os.path.isdir(fp):
-                    shutil.rmtree(fp)
-            except Exception as e:
-                print(f"[ERROR] {fp}: {e}")
-        print(f"已清理 {folder}/")
-    else:
-        os.makedirs(path, exist_ok=True)
+# 1. 清理公共 output / logs（由配置开关控制）
+if ENABLE_CLEAN_ROOT_OUTPUT:
+    for folder in ("output", "logs"):
+        path = os.path.join(script_dir, folder)
+        if os.path.isdir(path):
+            for f in os.listdir(path):
+                fp = os.path.join(path, f)
+                try:
+                    if os.path.isfile(fp):
+                        os.remove(fp)
+                    elif os.path.isdir(fp):
+                        shutil.rmtree(fp)
+                except Exception as e:
+                    print(f"[ERROR] {fp}: {e}")
+            print(f"已清理 {folder}/")
+        else:
+            os.makedirs(path, exist_ok=True)
+else:
+    print("ENABLE_CLEAN_ROOT_OUTPUT=False，跳过公共 output/logs 清理")
 
 # 2. 清理各子模块的 output / logs
 _skip_dirs = {"output", "logs", "temp", "__pycache__"}
