@@ -70,7 +70,10 @@ def main():
 
         print(f"数据库中已有 {len(symbol_db_map)} 条 WEEX 记录")
 
-        for item in rank_data:
+        total = len(rank_data)
+        for idx, item in enumerate(rank_data, 1):
+            if idx % 100 == 0 or idx == total:
+                print(f"  进度: {idx}/{total}")
             symbol_name = item["symbol"]
             latest_price = float(item["price"])
             float_count = item["float_count"]

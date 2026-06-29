@@ -11,12 +11,17 @@
 """
 
 import json, os
+from datetime import datetime
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 input_file = os.path.normpath(os.path.join(script_dir, "..", "output", "weex_filter_symbol_rank_data.jsonc"))
 output_dir = os.path.join(script_dir, "output")
 os.makedirs(output_dir, exist_ok=True)
-output_file = os.path.join(output_dir, "weex_filter_symbol_rank_data.txt")
+
+# 生成时间戳文件名
+now = datetime.now()
+ts = now.strftime("%Y_%m_%d__%H_%M_%S") + f"_{now.microsecond:06d}"
+output_file = os.path.join(output_dir, f"weex_filter_symbol_rank_data_{ts}.txt")
 
 if not os.path.isfile(input_file):
     print(f"文件不存在: {input_file}")

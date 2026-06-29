@@ -39,12 +39,20 @@ WEEX_IGNORE_SYMBOLS = [
     "cmt_\u00b1\u201c\u221e\u2264\u00bb\u00e0\u2026\u02d9usdt",
     "cmt_币安人生usdt",
     "cmt_老子usdt",
-    "cmt_basusdt",
-    "cmt_glwusdt",
     "cmt_labusdt",
     "cmt_beusdt",
     "cmt_blessusdt",
     "cmt_carvusdt",
+    "cmt_velvetusdt",
+    "cmt_ousdt",
+    "cmt_raveusdt",
+    "cmt_slxusdt",
+    "cmt_sportfunusdt",
+    "cmt_toshiusdt",
+    "cmt_1000satsusdt",
+    "cmt_capusdt",
+    "cmt_heiusdt",
+    "cmt_龙虾usdt",
 ]
 
 # 全局 SQL 执行开关（作用于所有脚本中 cursor.execute/conn.commit/conn.rollback）

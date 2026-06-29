@@ -72,7 +72,7 @@ def main():
             if len(row) >= 4:
                 symbol_db_map[row[2].lower()] = row[0]
         print(f"t_trade_platf_set 中已有 {len(symbol_db_map)} 条 WEEX 记录")
-
+        
         # # WEEX 不需要此操作
         # # 开仓数量设置比例  将真实币的数量 换算成  张 ，如在 XT,OURBIT,MEXC 平台上开仓 0.01 ETH = 1 张
         # # 查询 t_symbol_info 获取 f_set_amount_ratio  
@@ -87,7 +87,10 @@ def main():
         #         symbol_db_amount_ratio_map[row[2].lower()] = row[3]
         # print(f"t_symbol_info 中已有 {len(symbol_db_amount_ratio_map)} 条 WEEX 金额比例记录")
 
-        for item in rank_data:
+        total = len(rank_data)
+        for idx, item in enumerate(rank_data, 1):
+            if idx % 100 == 0 or idx == total:
+                print(f"  进度: {idx}/{total}")
             symbol_name : str = item["symbol"]       # "cmt_mantausdt"
             float_count : str = item["float_count"]
             latest_price = float(item["price"])
