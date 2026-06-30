@@ -139,7 +139,7 @@ def main():
                     limit_order_price_offset *= 0.1
                 limit_order_price_offset_str = "{:.{n}f}".format(limit_order_price_offset, n=n_float_count)
 
-                dif_price_f_min = limit_order_price_offset * 3.0    # 经过大量数据测试，发现 3.0 是一个比较合理的值
+                dif_price_f_min = limit_order_price_offset * 4.5    # 经过大量数据测试，发现 4.5 是一个比较合理的值
                 if dif_price_f < dif_price_f_min:
                     dif_price_f = dif_price_f_min
                 dif_price_str = "{:.{n}f}".format(dif_price_f, n=n_float_count)
@@ -300,6 +300,7 @@ def main():
                     "values ("
                     "'{}', '{}', "
                     "'{}', '{}', '{}', '{}', '{}', "
+                    "'{}', '{}', "
                     "'{}', '{}', "
                     "'{}', '{}', "
                     "'{}', '{}', "
