@@ -41,6 +41,7 @@ WEEX_IGNORE_SYMBOLS = [
     "cmt_老子usdt",
     "cmt_labusdt",
     "cmt_beusdt",
+    "cmt_belusdt",
     "cmt_blessusdt",
     "cmt_carvusdt",
     "cmt_velvetusdt",

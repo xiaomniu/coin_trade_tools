@@ -30,7 +30,10 @@ test_scripts/
 │   ├── clean_output.py
 │   └── output/
 ├── test_20260628_utils/               # 工具类模块
-│   ├── clean_output.py                # 清理本目录 output/logs
+│   ├── clean_output.py                     # 清理本目录 output/logs
+│   ├── weex_merge_rank_files.py            # 合并 rank 文件
+│   ├── weex_merge_db_files.py              # 合并 SQL 对比文件
+│   └── export_binance_ticker_symbol.py     # 导出 Binance symbol
 └── <新模块>/                          # 按此规范建目录
     ├── xxx.py
     ├── clean_output.py
@@ -50,6 +53,9 @@ test_scripts/
 | `test_weex_20260628_ticker/` | `weex_filter_symbol_rank_data.py` | 提取共同 symbol 并生成 WEEX rank 数据 |
 | `test_weex_20260628_ticker/` | `weex_update_t_symbol_info.py` | 将 rank 数据更新到 t_symbol_info |
 | `test_weex_20260628_ticker/` | `weex_update_t_trade_platf_set.py` | 将 rank 数据处理后更新到 t_trade_platf_set |
+| `test_20260628_utils/` | `weex_merge_rank_files.py` | 合并两个 rank 文件中的共同 symbol |
+| `test_20260628_utils/` | `weex_merge_db_files.py` | 合并 33.txt 与 SQL 文件对比 |
+| `test_20260628_utils/` | `export_binance_ticker_symbol.py` | 导出 Binance symbol 列表 |
 
 ## ⚙️ 公共模块
 

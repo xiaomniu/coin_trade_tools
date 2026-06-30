@@ -30,9 +30,20 @@ if not os.path.isfile(input_file):
 with open(input_file, "r", encoding="utf-8") as f:
     lines = [l for l in f if not l.strip().startswith("//")]
 data = json.loads("".join(lines))
-data.sort(key=lambda x: float(x["rank"]), reverse=True)
+data.sort(key=lambda x: float(x["binance_rank"]), reverse=True)
 
+# 过滤 rank=0 的 symbol
+skipped_items = []
+filtered = []
+for item in data:
+    if float(item["rank"]) == 0.0:
+        skipped_items.append(item)
+    else:
+        filtered.append(item)
+
+data = filtered
 total = len(data)
+skipped_symbols = [item["symbol"] for item in skipped_items]
 
 # 计算分组位置（参考原函数逻辑）
 mod_20 = total % 20
@@ -54,6 +65,14 @@ for i in range(half_split_count + 1):
     split_bank_add_num += 20
 
 with open(output_file, "w", encoding="utf-8") as f:
+    # 开头写入被跳过的 rank=0 数据
+    if skipped_items:
+        f.write("\n\n")
+        f.write("###### rank=0 ######\n")
+        for item in skipped_items:
+            f.write(str(item).replace("'", '"') + "\n")
+        f.write("###### end ######\n\n\n")
+
     f.write("\n\n")
     index_num = 0
     for item in data:
@@ -62,5 +81,15 @@ with open(output_file, "w", encoding="utf-8") as f:
         if index_num in bank_line_num_list:
             f.write("\n")
 
+# 额外保存一份到 test_scripts/output/
+parent_out = os.path.normpath(os.path.join(script_dir, "..", "output"))
+os.makedirs(parent_out, exist_ok=True)
+parent_output_file = os.path.join(parent_out, f"weex_filter_symbol_rank_data_{ts}.txt")
+import shutil
+shutil.copy2(output_file, parent_output_file)
+
 print(f"[输出] {output_file}")
-print(f"共 {total} 个 symbol")
+print(f"[公共] {parent_output_file}")
+print(f"共 {total} 个 symbol，跳过 {len(skipped_items)} 个 rank=0 的 symbol")
+if skipped_symbols:
+    print(f"跳过的 symbol: {', '.join(skipped_symbols)}")
