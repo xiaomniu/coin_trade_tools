@@ -11,6 +11,30 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 preserve_paths = {
     os.path.normcase(os.path.normpath(os.path.join(
         script_dir,
+        "test_binance_20260628_ticker",
+        "output",
+        "binance_ticker",
+    ))),
+    os.path.normcase(os.path.normpath(os.path.join(
+        script_dir,
+        "test_weex_20260628_ticker",
+        "output",
+        "weex_metadata",
+    ))),
+    os.path.normcase(os.path.normpath(os.path.join(
+        script_dir,
+        "test_weex_20260628_ticker",
+        "output",
+        "weex_ticker",
+    ))),
+    os.path.normcase(os.path.normpath(os.path.join(
+        script_dir,
+        "test_weex_20260628_ticker",
+        "output",
+        "weex_filter_symbol_rank_data",
+    ))),
+    os.path.normcase(os.path.normpath(os.path.join(
+        script_dir,
         "test_weex_20260628_ticker",
         "output",
         "weex_filter_symbol_rank_data_groups",

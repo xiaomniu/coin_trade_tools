@@ -8,6 +8,15 @@ import os, shutil
 script_dir = os.path.dirname(os.path.abspath(__file__))
 preserve_paths = {
     os.path.normcase(os.path.normpath(
+        os.path.join(script_dir, "output", "weex_metadata")
+    )),
+    os.path.normcase(os.path.normpath(
+        os.path.join(script_dir, "output", "weex_ticker")
+    )),
+    os.path.normcase(os.path.normpath(
+        os.path.join(script_dir, "output", "weex_filter_symbol_rank_data")
+    )),
+    os.path.normcase(os.path.normpath(
         os.path.join(script_dir, "output", "weex_filter_symbol_rank_data_groups")
     ))
 }
