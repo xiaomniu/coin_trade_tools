@@ -87,6 +87,7 @@ pip install -r requirements.txt
 | `ALLOW_EXECUTE_SQL` | 是否实际执行 SQL |
 | `ENABLE_COPY_WEEX_RANK_GROUPS_CURRENT` | 是否将最新 WEEX rank 分组 jsonc 同步到 `test_scripts/output/weex_filter_symbol_rank_data_groups_current` |
 | `ENABLE_COPY_WEEX_RANK_GROUPS_RUN` | 是否将指定 WEEX rank 分组 jsonc 同步到 `test_scripts/output/weex_filter_symbol_rank_data_groups_run` |
+| `WEEX_RANK_GROUPS_RUN_INDEXES` | 指定同步到 run 目录的 WEEX rank 分组，英文逗号分隔；正数从开头取，负数从结尾取，例如 `1,2,-2,-1` |
 
 ## 📝 约定
 - 每个测试模块在 `test_scripts/` 下独立建目录

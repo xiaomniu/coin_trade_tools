@@ -61,6 +61,23 @@ def _env_int(name: str, default: int) -> int:
     return int(value)
 
 
+def _env_int_tuple(name: str, default: tuple) -> tuple:
+    value = os.getenv(name)
+    if value is None or value.strip() == "":
+        return default
+
+    value = value.strip()
+    if len(value) >= 2 and value[0] in {"(", "["} and value[-1] in {")", "]"}:
+        value = value[1:-1].strip()
+    if not value:
+        return tuple()
+
+    try:
+        return tuple(int(item.strip()) for item in value.split(",") if item.strip())
+    except ValueError as exc:
+        raise ValueError(f"{name} 必须配置为英文逗号分隔的整数列表，例如: 1,2,-2,-1") from exc
+
+
 # 代理地址
 PROXY = os.getenv("TRADE_TOOLS_PROXY", "http://127.0.0.1:10808")
 
@@ -125,7 +142,7 @@ ENABLE_COPY_WEEX_RANK_GROUPS_CURRENT = _env_bool("ENABLE_COPY_WEEX_RANK_GROUPS_C
 ENABLE_COPY_WEEX_RANK_GROUPS_RUN = _env_bool("ENABLE_COPY_WEEX_RANK_GROUPS_RUN", True)
 
 # WEEX rank 业务运行分组：正数从开头取，负数从结尾取，均为 1-based 组号
-WEEX_RANK_GROUPS_RUN_INDEXES = (1, 2, -2, -1)
+WEEX_RANK_GROUPS_RUN_INDEXES = _env_int_tuple("WEEX_RANK_GROUPS_RUN_INDEXES", (1, 2, -2, -1))
 
 # RustNote 对比文件路径（工具脚本使用）
 RUSTNOTE_WEEX_RANK_FILE = os.getenv("RUSTNOTE_WEEX_RANK_FILE", "")
