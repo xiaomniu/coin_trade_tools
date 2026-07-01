@@ -8,6 +8,14 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from config import ENABLE_CLEAN_ROOT_OUTPUT
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
+preserve_paths = {
+    os.path.normcase(os.path.normpath(os.path.join(
+        script_dir,
+        "test_weex_20260628_ticker",
+        "output",
+        "weex_filter_symbol_rank_data_groups",
+    )))
+}
 
 # 1. 清理公共 output / logs（由配置开关控制）
 if ENABLE_CLEAN_ROOT_OUTPUT:
@@ -42,6 +50,10 @@ for entry in os.listdir(script_dir):
         if os.path.isdir(path):
             for f in os.listdir(path):
                 fp = os.path.join(path, f)
+                norm_fp = os.path.normcase(os.path.normpath(fp))
+                if norm_fp in preserve_paths:
+                    print(f"已保留 {entry}/{folder}/{f}/")
+                    continue
                 try:
                     if os.path.isfile(fp):
                         os.remove(fp)

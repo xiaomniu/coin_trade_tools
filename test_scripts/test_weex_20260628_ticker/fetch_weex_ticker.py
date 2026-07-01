@@ -53,7 +53,7 @@ def fetch_weex_24hr_ticker(symbol=None, proxy=None):
 
 
 def _outdir():
-    d = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output")
+    d = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output", "weex_ticker")
     os.makedirs(d, exist_ok=True)
     return d
 

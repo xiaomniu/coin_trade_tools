@@ -6,12 +6,21 @@
 import os, shutil
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
+preserve_paths = {
+    os.path.normcase(os.path.normpath(
+        os.path.join(script_dir, "output", "weex_filter_symbol_rank_data_groups")
+    ))
+}
 
 for folder in ("output", "logs"):
     path = os.path.join(script_dir, folder)
     if os.path.isdir(path):
         for filename in os.listdir(path):
             file_path = os.path.join(path, filename)
+            norm_file_path = os.path.normcase(os.path.normpath(file_path))
+            if norm_file_path in preserve_paths:
+                print(f"已保留 {file_path}")
+                continue
             try:
                 if os.path.isfile(file_path):
                     os.remove(file_path)

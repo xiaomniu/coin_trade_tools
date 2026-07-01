@@ -76,7 +76,7 @@ def main():
 
     # 保存
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    output_dir = os.path.join(script_dir, "output")
+    output_dir = os.path.join(script_dir, "output", "weex_metadata")
     os.makedirs(output_dir, exist_ok=True)
     filename = f"weex_metadata_{ts}.jsonc"
     filepath = os.path.join(output_dir, filename)

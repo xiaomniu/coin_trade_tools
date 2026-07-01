@@ -7,7 +7,7 @@
 - 整体分为前后两半（各半在对应位置也有空行分隔）
 
 输入:  test_scripts/output/weex_filter_symbol_rank_data.jsonc
-输出:  test_weex_20260628_ticker/output/weex_filter_symbol_rank_data.txt
+输出:  test_weex_20260628_ticker/output/weex_filter_symbol_rank_data/weex_filter_symbol_rank_data_*.txt
       test_weex_20260628_ticker/output/weex_filter_symbol_rank_data_groups/weex_filter_symbol_rank_data_groups_*/group_*.jsonc
       test_scripts/output/weex_filter_symbol_rank_data_groups_current/group_*.jsonc
       test_scripts/output/weex_filter_symbol_rank_data_groups_run/group_*.jsonc
@@ -59,13 +59,15 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 input_file = os.path.normpath(os.path.join(script_dir, "..", "output", "weex_filter_symbol_rank_data.jsonc"))
 output_dir = os.path.join(script_dir, "output")
 os.makedirs(output_dir, exist_ok=True)
+rank_txt_output_dir = os.path.join(output_dir, "weex_filter_symbol_rank_data")
+os.makedirs(rank_txt_output_dir, exist_ok=True)
 parent_out = os.path.normpath(os.path.join(script_dir, "..", "output"))
 os.makedirs(parent_out, exist_ok=True)
 
 # 生成时间戳文件名
 now = datetime.now()
 ts = now.strftime("%Y_%m_%d__%H_%M_%S") + f"_{now.microsecond:06d}"
-output_file = os.path.join(output_dir, f"weex_filter_symbol_rank_data_{ts}.txt")
+output_file = os.path.join(rank_txt_output_dir, f"weex_filter_symbol_rank_data_{ts}.txt")
 group_root_dir = os.path.join(output_dir, "weex_filter_symbol_rank_data_groups")
 group_output_dir = os.path.join(group_root_dir, f"weex_filter_symbol_rank_data_groups_{ts}")
 current_group_output_dir = os.path.join(parent_out, "weex_filter_symbol_rank_data_groups_current")
@@ -175,17 +177,12 @@ if ENABLE_COPY_WEEX_RANK_GROUPS_RUN:
         shutil.copy2(group_file, target_file)
         run_group_files.append(target_file)
 
-# 额外保存一份到 test_scripts/output/
-parent_output_file = os.path.join(parent_out, f"weex_filter_symbol_rank_data_{ts}.txt")
-shutil.copy2(output_file, parent_output_file)
-
 print(f"[输出] {output_file}")
 print(f"[分组] {group_output_dir} ({len(groups)} 个文件)")
 if ENABLE_COPY_WEEX_RANK_GROUPS_CURRENT:
     print(f"[当前分组] {current_group_output_dir} ({len(group_files)} 个文件)")
 if ENABLE_COPY_WEEX_RANK_GROUPS_RUN:
     print(f"[运行分组] {run_group_output_dir} ({len(run_group_files)} 个文件)")
-print(f"[公共] {parent_output_file}")
 print(f"共 {total} 个 symbol，跳过 {len(skipped_items)} 个 rank=0 的 symbol")
 if skipped_symbols:
     print(f"跳过的 symbol: {', '.join(skipped_symbols)}")
