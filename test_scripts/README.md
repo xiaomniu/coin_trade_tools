@@ -27,6 +27,7 @@ test_scripts/
 │   ├── weex_filter_symbol_rank_data.py # WEEX rank 数据生成
 │   ├── weex_update_t_symbol_info.py    # 更新 t_symbol_info
 │   ├── weex_update_t_trade_platf_set.py # 更新 t_trade_platf_set
+│   ├── weex_gen_ccuser_by_rank_group_file.py # 根据 rank 分组生成 cc 用户 SQL
 │   ├── clean_output.py
 │   └── output/
 ├── test_20260628_utils/               # 工具类模块
@@ -53,6 +54,7 @@ test_scripts/
 | `test_weex_20260628_ticker/` | `weex_filter_symbol_rank_data.py` | 提取共同 symbol 并生成 WEEX rank 数据 |
 | `test_weex_20260628_ticker/` | `weex_update_t_symbol_info.py` | 将 rank 数据更新到 t_symbol_info |
 | `test_weex_20260628_ticker/` | `weex_update_t_trade_platf_set.py` | 将 rank 数据处理后更新到 t_trade_platf_set |
+| `test_weex_20260628_ticker/` | `weex_gen_ccuser_by_rank_group_file.py` | 根据 run 分组 rank 数据生成 t_trade_agent cc 用户 SQL |
 | `test_20260628_utils/` | `weex_merge_rank_files.py` | 合并两个 rank 文件中的共同 symbol |
 | `test_20260628_utils/` | `weex_merge_db_files.py` | 合并 33.txt 与 SQL 文件对比 |
 | `test_20260628_utils/` | `export_binance_ticker_symbol.py` | 导出 Binance symbol 列表 |

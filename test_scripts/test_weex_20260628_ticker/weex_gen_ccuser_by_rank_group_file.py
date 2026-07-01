@@ -9,7 +9,7 @@ add_xt_cc_user_by_xt_symbol_rank_file() 的逻辑。
     test_scripts/output/weex_filter_symbol_rank_data_groups_run/group_*.jsonc
 
 输出:
-    test_scripts/test_weex_20260628_ticker/output/create_ccuser_by_rank_group_file_{ts}.sql
+    test_scripts/test_weex_20260628_ticker/output/weex_gen_ccuser_by_rank_group_file_{ts}.sql
 
 注意:
     默认只生成 SQL 日志；需要实际执行 INSERT 时，将环境变量 ALLOW_EXECUTE_SQL 设置为 true。
@@ -538,7 +538,7 @@ def main():
         cursor.close()
         conn.close()
 
-    fp_sql = os.path.join(output_dir, f"create_ccuser_by_rank_group_file_{ts}.sql")
+    fp_sql = os.path.join(output_dir, f"weex_gen_ccuser_by_rank_group_file_{ts}.sql")
     header = [
         "-- ============================================================",
         "-- WEEX t_trade_agent 新增用户 SQL",
