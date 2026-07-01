@@ -1,5 +1,6 @@
 """
-读取 weex_filter_symbol_rank_data.jsonc 中的数据，按行保存到 weex_filter_symbol_rank_data.txt
+读取 weex_filter_symbol_rank_data.jsonc 中的数据，按行保存到 weex_filter_symbol_rank_data.txt，
+并将分组后的数据分别保存为单个 jsonc 文件。
 参考 parse_weex_symbol_24h_rank_files() 中的输出逻辑：
 - 按 rank 降序排列
 - 每 20 行一组，组间插入空行
@@ -7,6 +8,7 @@
 
 输入:  test_scripts/output/weex_filter_symbol_rank_data.jsonc
 输出:  test_weex_20260628_ticker/output/weex_filter_symbol_rank_data.txt
+      test_weex_20260628_ticker/output/weex_filter_symbol_rank_data_groups_*/group_*.jsonc
 用法: python weex_sort_24hr_rank_data.py
 """
 
@@ -25,6 +27,7 @@ os.makedirs(output_dir, exist_ok=True)
 now = datetime.now()
 ts = now.strftime("%Y_%m_%d__%H_%M_%S") + f"_{now.microsecond:06d}"
 output_file = os.path.join(output_dir, f"weex_filter_symbol_rank_data_{ts}.txt")
+group_output_dir = os.path.join(output_dir, f"weex_filter_symbol_rank_data_groups_{ts}")
 
 if not os.path.isfile(input_file):
     print(f"文件不存在: {input_file}")
@@ -65,6 +68,17 @@ for i in range(half_split_count + 1):
     bank_line_num_list.append(left_half_bank_line_num + split_bank_add_num)
     split_bank_add_num += 20
 
+group_boundary_set = {n for n in bank_line_num_list if 0 < n < total}
+groups = []
+current_group = []
+for index_num, item in enumerate(data, 1):
+    current_group.append(item)
+    if index_num in group_boundary_set:
+        groups.append(current_group)
+        current_group = []
+if current_group:
+    groups.append(current_group)
+
 with open(output_file, "w", encoding="utf-8") as f:
     # 开头写入被跳过的 rank=0 数据
     if skipped_items:
@@ -82,6 +96,25 @@ with open(output_file, "w", encoding="utf-8") as f:
         if index_num in bank_line_num_list:
             f.write("\n")
 
+os.makedirs(group_output_dir, exist_ok=True)
+for group_index, group_items in enumerate(groups, 1):
+    group_file = os.path.join(group_output_dir, f"group_{group_index:03d}.jsonc")
+    body = "[\n" + ",\n".join("  " + Utils.dumps_json_line(item) for item in group_items) + "\n]"
+    lines = [
+        "// ============================================================",
+        "// WEEX 过滤 symbol rank 分组数据",
+        f"// 创建时间: {now.strftime('%Y-%m-%d %H:%M:%S')}",
+        f"// 分组序号: {group_index}/{len(groups)}",
+        f"// 数据量:   {len(group_items)}",
+        "// 来源:     weex_filter_symbol_rank_data.jsonc",
+        "// ============================================================",
+        "",
+        body,
+        "",
+    ]
+    with open(group_file, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+
 # 额外保存一份到 test_scripts/output/
 parent_out = os.path.normpath(os.path.join(script_dir, "..", "output"))
 os.makedirs(parent_out, exist_ok=True)
@@ -89,6 +122,7 @@ parent_output_file = os.path.join(parent_out, f"weex_filter_symbol_rank_data_{ts
 shutil.copy2(output_file, parent_output_file)
 
 print(f"[输出] {output_file}")
+print(f"[分组] {group_output_dir} ({len(groups)} 个文件)")
 print(f"[公共] {parent_output_file}")
 print(f"共 {total} 个 symbol，跳过 {len(skipped_items)} 个 rank=0 的 symbol")
 if skipped_symbols:
