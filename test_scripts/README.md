@@ -85,6 +85,8 @@ pip install -r requirements.txt
 | `ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE` | 是否启用 `fetch_weex_metadata.py` 的 symbol_code 数据库更新 |
 | `ENABLE_CLEAN_ROOT_OUTPUT` | 是否允许 `clean_all_output.py` 清理公共 `output/logs` |
 | `ALLOW_EXECUTE_SQL` | 是否实际执行 SQL |
+| `ENABLE_COPY_WEEX_RANK_GROUPS_CURRENT` | 是否将最新 WEEX rank 分组 jsonc 同步到 `test_scripts/output/weex_filter_symbol_rank_data_groups_current` |
+| `ENABLE_COPY_WEEX_RANK_GROUPS_RUN` | 是否将指定 WEEX rank 分组 jsonc 同步到 `test_scripts/output/weex_filter_symbol_rank_data_groups_run` |
 
 ## 📝 约定
 - 每个测试模块在 `test_scripts/` 下独立建目录

@@ -118,6 +118,15 @@ ENABLE_CLEAN_ROOT_OUTPUT = _env_bool("ENABLE_CLEAN_ROOT_OUTPUT", False)
 # 全局 SQL 执行开关（作用于所有脚本中 cursor.execute/conn.commit/conn.rollback）
 ALLOW_EXECUTE_SQL = _env_bool("ALLOW_EXECUTE_SQL", False)
 
+# 是否将最新 WEEX rank 分组 jsonc 同步到 test_scripts/output/weex_filter_symbol_rank_data_groups_current
+ENABLE_COPY_WEEX_RANK_GROUPS_CURRENT = _env_bool("ENABLE_COPY_WEEX_RANK_GROUPS_CURRENT", True)
+
+# 是否将指定 WEEX rank 分组 jsonc 同步到 test_scripts/output/weex_filter_symbol_rank_data_groups_run
+ENABLE_COPY_WEEX_RANK_GROUPS_RUN = _env_bool("ENABLE_COPY_WEEX_RANK_GROUPS_RUN", True)
+
+# WEEX rank 业务运行分组：正数从开头取，负数从结尾取，均为 1-based 组号
+WEEX_RANK_GROUPS_RUN_INDEXES = (1, 2, -2, -1)
+
 # RustNote 对比文件路径（工具脚本使用）
 RUSTNOTE_WEEX_RANK_FILE = os.getenv("RUSTNOTE_WEEX_RANK_FILE", "")
 RUSTNOTE_ORDER_REC_FILE = os.getenv("RUSTNOTE_ORDER_REC_FILE", "")
