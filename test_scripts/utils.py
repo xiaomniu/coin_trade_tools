@@ -8,6 +8,7 @@ test_scripts 公共工具类
 """
 
 import json
+import re
 
 
 class Utils:
@@ -32,10 +33,12 @@ class Utils:
 
     @staticmethod
     def load_jsonc(filepath: str):
-        """读取允许整行 // 注释的 JSONC 文件。"""
+        """读取允许整行 // 注释和尾随逗号的 JSONC 文件。"""
         with open(filepath, "r", encoding="utf-8") as f:
             lines = [line for line in f if not line.strip().startswith("//")]
-        return json.loads("".join(lines))
+        content = "".join(lines)
+        content = re.sub(r",(\s*[}\]])", r"\1", content)
+        return json.loads(content)
 
     @staticmethod
     def dumps_json_line(data) -> str:
