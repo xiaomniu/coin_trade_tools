@@ -3,7 +3,10 @@
 用法: python export_binance_ticker_symbol.py
 """
 
-import json, os
+import os, sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from utils import Utils
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 input_file = os.path.normpath(os.path.join(script_dir, "..", "output", "binance_ticker_simple_ALL.jsonc"))
@@ -13,9 +16,7 @@ if not os.path.isfile(input_file):
     print(f"文件不存在: {input_file}")
     exit(1)
 
-with open(input_file, "r", encoding="utf-8") as f:
-    lines = [l for l in f if not l.strip().startswith("//")]
-data = json.loads("".join(lines))
+data = Utils.load_jsonc(input_file)
 
 symbols = [item["symbol"] for item in data]
 

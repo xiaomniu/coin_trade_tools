@@ -7,6 +7,8 @@ test_scripts 公共工具类
     Utils.format_float(...)
 """
 
+import json
+
 
 class Utils:
     @staticmethod
@@ -27,6 +29,32 @@ class Utils:
         if "." in str_val:
             str_val = str_val.rstrip("0").rstrip(".")
         return str_val
+
+    @staticmethod
+    def load_jsonc(filepath: str):
+        """读取允许整行 // 注释的 JSONC 文件。"""
+        with open(filepath, "r", encoding="utf-8") as f:
+            lines = [line for line in f if not line.strip().startswith("//")]
+        return json.loads("".join(lines))
+
+    @staticmethod
+    def dumps_json_line(data) -> str:
+        """输出紧凑 JSON 行，保留中文字符。"""
+        return json.dumps(data, ensure_ascii=False)
+
+    @staticmethod
+    def sql_quote(value) -> str:
+        """返回 SQL 字符串字面量，供生成 SQL 日志和受控执行复用。"""
+        if value is None:
+            return "NULL"
+        return "'" + Utils.sql_escape(value) + "'"
+
+    @staticmethod
+    def sql_escape(value) -> str:
+        """转义 SQL 字符串值；调用方负责添加外层引号。"""
+        if value is None:
+            return ""
+        return str(value).replace("\\", "\\\\").replace("'", "''")
 
 
 if __name__ == "__main__":

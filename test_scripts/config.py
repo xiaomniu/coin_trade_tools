@@ -6,24 +6,80 @@ test_scripts 公共配置
     from config import PROXY
 """
 
+import os
+
+
+PROJECT_ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+ENV_FILE = os.path.join(PROJECT_ROOT, ".env")
+
+
+def _load_dotenv(filepath: str = ENV_FILE) -> None:
+    """加载项目根目录 .env；已有系统环境变量不被覆盖。"""
+    if not os.path.isfile(filepath):
+        return
+
+    with open(filepath, "r", encoding="utf-8") as f:
+        for raw_line in f:
+            line = raw_line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if line.startswith("export "):
+                line = line[len("export "):].strip()
+            if "=" not in line:
+                continue
+
+            key, value = line.split("=", 1)
+            key = key.strip()
+            value = value.strip()
+            if not key:
+                continue
+
+            if (
+                len(value) >= 2
+                and value[0] == value[-1]
+                and value[0] in {"'", '"'}
+            ):
+                value = value[1:-1]
+
+            os.environ.setdefault(key, value)
+
+
+_load_dotenv()
+
+
+def _env_bool(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _env_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None or value.strip() == "":
+        return default
+    return int(value)
+
+
 # 代理地址
-PROXY = "http://127.0.0.1:10808"
+PROXY = os.getenv("TRADE_TOOLS_PROXY", "http://127.0.0.1:10808")
 
 # 数据库配置
+# 敏感值从环境变量读取；未配置时数据库脚本会在连接前给出明确错误。
 DB_CONFIG = {
     "DDBB": {
-        "host": "8.217.125.84",
-        "user": "root",
-        "password": "LOA@",
-        "database": "ddbb",
-        "port": 23306,
+        "host": os.getenv("TRADE_TOOLS_DDBB_HOST", ""),
+        "user": os.getenv("TRADE_TOOLS_DDBB_USER", ""),
+        "password": os.getenv("TRADE_TOOLS_DDBB_PASSWORD", ""),
+        "database": os.getenv("TRADE_TOOLS_DDBB_DATABASE", ""),
+        "port": _env_int("TRADE_TOOLS_DDBB_PORT", 23306),
     },
     "PLOYEOS": {
-        "host": "43.163.251.140",
-        "user": "root",
-        "password": "LOA@",
-        "database": "ployeos",
-        "port": 23306,
+        "host": os.getenv("TRADE_TOOLS_PLOYEOS_HOST", ""),
+        "user": os.getenv("TRADE_TOOLS_PLOYEOS_USER", ""),
+        "password": os.getenv("TRADE_TOOLS_PLOYEOS_PASSWORD", ""),
+        "database": os.getenv("TRADE_TOOLS_PLOYEOS_DATABASE", ""),
+        "port": _env_int("TRADE_TOOLS_PLOYEOS_PORT", 23306),
     },
 }
 
@@ -51,17 +107,20 @@ WEEX_IGNORE_SYMBOLS = [
     "cmt_rifusdt",
     "cmt_xnyusdt",
     "cmt_basedusdt",
-    "cmt_xnyusdt",
 ]
 
 # 是否启用数据库 symbol_code 更新
-ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE = False  # 改为 True 后 fetch_weex_metadata.py 才会执行数据库更新
+ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE = _env_bool("ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE", False)
 
 # 是否清理 test_scripts 根目录的 output / logs（clean_all_output.py 会读取）
-ENABLE_CLEAN_ROOT_OUTPUT = False  # 改为 True 后 clean_all_output 才会清理公共 output/logs
+ENABLE_CLEAN_ROOT_OUTPUT = _env_bool("ENABLE_CLEAN_ROOT_OUTPUT", False)
 
 # 全局 SQL 执行开关（作用于所有脚本中 cursor.execute/conn.commit/conn.rollback）
-ALLOW_EXECUTE_SQL = False  # 改为 True 后去除 TODO 标记的 SQL 才会实际执行
+ALLOW_EXECUTE_SQL = _env_bool("ALLOW_EXECUTE_SQL", False)
+
+# RustNote 对比文件路径（工具脚本使用）
+RUSTNOTE_WEEX_RANK_FILE = os.getenv("RUSTNOTE_WEEX_RANK_FILE", "")
+RUSTNOTE_ORDER_REC_FILE = os.getenv("RUSTNOTE_ORDER_REC_FILE", "")
 
 # 可在此添加其他公共配置参数
 # REQUEST_TIMEOUT = 30

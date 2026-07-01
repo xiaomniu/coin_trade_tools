@@ -10,8 +10,11 @@
 用法: python weex_sort_24hr_rank_data.py
 """
 
-import json, os
+import os, shutil, sys
 from datetime import datetime
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from utils import Utils
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 input_file = os.path.normpath(os.path.join(script_dir, "..", "output", "weex_filter_symbol_rank_data.jsonc"))
@@ -27,9 +30,7 @@ if not os.path.isfile(input_file):
     print(f"文件不存在: {input_file}")
     exit(1)
 
-with open(input_file, "r", encoding="utf-8") as f:
-    lines = [l for l in f if not l.strip().startswith("//")]
-data = json.loads("".join(lines))
+data = Utils.load_jsonc(input_file)
 data.sort(key=lambda x: float(x["binance_rank"]), reverse=True)
 
 # 过滤 rank=0 的 symbol
@@ -70,13 +71,13 @@ with open(output_file, "w", encoding="utf-8") as f:
         f.write("\n\n")
         f.write("###### rank=0 ######\n")
         for item in skipped_items:
-            f.write(str(item).replace("'", '"') + "\n")
+            f.write(Utils.dumps_json_line(item) + "\n")
         f.write("###### end ######\n\n\n")
 
     f.write("\n\n")
     index_num = 0
     for item in data:
-        f.write(str(item).replace("'", '"') + "\n")
+        f.write(Utils.dumps_json_line(item) + "\n")
         index_num += 1
         if index_num in bank_line_num_list:
             f.write("\n")
@@ -85,7 +86,6 @@ with open(output_file, "w", encoding="utf-8") as f:
 parent_out = os.path.normpath(os.path.join(script_dir, "..", "output"))
 os.makedirs(parent_out, exist_ok=True)
 parent_output_file = os.path.join(parent_out, f"weex_filter_symbol_rank_data_{ts}.txt")
-import shutil
 shutil.copy2(output_file, parent_output_file)
 
 print(f"[输出] {output_file}")

@@ -19,9 +19,7 @@ from utils import Utils
 
 
 def load_jsonc(filepath):
-    with open(filepath, "r", encoding="utf-8") as f:
-        lines = [l for l in f if not l.strip().startswith("//")]
-    return json.loads("".join(lines))
+    return Utils.load_jsonc(filepath)
 
 
 def main():
@@ -41,7 +39,7 @@ def main():
 
     if not os.path.isfile(data_file):
         print(f"文件不存在: {data_file}")
-        return
+        sys.exit(1)
 
     rank_data = load_jsonc(data_file)
     print(f"读取到 {len(rank_data)} 条数据")
@@ -49,7 +47,11 @@ def main():
     platf_name = "WEEX"
 
     # 连接数据库查询现有记录
-    conn, cursor = connect_mysql_db(DB_TYPE_HOST_DDBB)
+    try:
+        conn, cursor = connect_mysql_db(DB_TYPE_HOST_DDBB)
+    except Exception as e:
+        print(f"[DB ERROR] 无法连接数据库: {e}")
+        sys.exit(1)
 
     sql_lines = []  # 收集 SQL 语句
     update_count = 0
@@ -79,6 +81,10 @@ def main():
             float_count = item["float_count"]
             set_amount_ratio = item.get("contract_size", "-1.0")
             coin_code = item.get("symbol_code", "")
+            symbol_name_sql = Utils.sql_escape(symbol_name)
+            coin_code_sql = Utils.sql_escape(coin_code)
+            float_count_sql = Utils.sql_escape(float_count)
+            set_amount_ratio_sql = Utils.sql_escape(set_amount_ratio)
 
             # 计算 ajust_base_value (  对应参考函数中的计算逻辑) # "自动微调基准值"
             ajust_base_value = latest_price * 0.0006 * 4 * 0.205
@@ -95,7 +101,7 @@ def main():
                     "f_latest_price = '{}', "
                     "f_set_amount_ratio = '{}' "
                     "where f_id = {};"
-                ).format(coin_code, ajust_base_value_str, float_count, Utils.format_float(latest_price), set_amount_ratio, f_id)
+                ).format(coin_code_sql, ajust_base_value_str, float_count_sql, Utils.format_float(latest_price), set_amount_ratio_sql, f_id)
                 update_count += 1
             else:
                 # 不存在 → INSERT
@@ -104,7 +110,7 @@ def main():
                     "(f_platf_name, f_symbol, f_coin_code, f_coin_scale, "
                     "f_min_ajust_base_value, f_price_float_count, f_set_amount_ratio, f_latest_price) "
                     "values ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');"
-                ).format(platf_name, symbol_name, coin_code, "1.0", ajust_base_value_str, float_count, set_amount_ratio, Utils.format_float(latest_price))
+                ).format(platf_name, symbol_name_sql, coin_code_sql, "1.0", ajust_base_value_str, float_count_sql, set_amount_ratio_sql, Utils.format_float(latest_price))
                 insert_count += 1
 
             sql_lines.append(f"-- [{symbol_name}]")
@@ -145,7 +151,7 @@ def main():
         f.write("\n".join(header + sql_lines))
 
     print(f"\n[SQL日志] {fp_sql}")
-    print("\n提示: 需要执行时取消 cursor.execute() 和 conn.commit() 的注释即可。")
+    print("\n提示: 需要实际执行 SQL 时，将环境变量 ALLOW_EXECUTE_SQL 设置为 true。")
 
 
 if __name__ == "__main__":

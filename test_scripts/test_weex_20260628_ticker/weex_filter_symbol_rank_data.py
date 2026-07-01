@@ -17,9 +17,7 @@ from utils import Utils
 
 
 def load_jsonc(filepath):
-    with open(filepath, "r", encoding="utf-8") as f:
-        lines = [l for l in f if not l.strip().startswith("//")]
-    return json.loads("".join(lines))
+    return Utils.load_jsonc(filepath)
 
 
 def main():
@@ -34,10 +32,10 @@ def main():
 
     if not os.path.isfile(binance_file):
         print(f"文件不存在: {binance_file}")
-        return
+        sys.exit(1)
     if not os.path.isfile(weex_file):
         print(f"文件不存在: {weex_file}")
-        return
+        sys.exit(1)
 
     binance_data = load_jsonc(binance_file)
     weex_data = load_jsonc(weex_file)
@@ -60,7 +58,7 @@ def main():
     common_symbols = set(binance_map.keys()) & set(weex_map.keys())
     if not common_symbols:
         print("没有找到共同的 symbol")
-        return
+        sys.exit(1)
 
     # 忽略列表
     ignore_set = set(WEEX_IGNORE_SYMBOLS)

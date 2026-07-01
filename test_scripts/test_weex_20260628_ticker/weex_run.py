@@ -21,6 +21,8 @@ scripts = [
     (os.path.join(root, "test_weex_20260628_ticker", "weex_filter_symbol_rank_data.py"), "生成 weex_filter_symbol_rank_data.jsonc"),
 ]
 
+success = True
+
 for i, (script, desc) in enumerate(scripts, 1):
     print(f"\n{'='*60}")
     print(f"[{i}/{len(scripts)}] {script}")
@@ -34,8 +36,14 @@ for i, (script, desc) in enumerate(scripts, 1):
         print(f"[STDERR] {result.stderr.strip()}")
     if result.returncode != 0:
         print(f"执行失败，退出码: {result.returncode}")
+        success = False
         break
 
 print(f"\n{'='*60}")
-print("全部完成")
+if success:
+    print("全部完成")
+else:
+    print("流程已中断")
 print(f"{'='*60}")
+if not success:
+    sys.exit(1)

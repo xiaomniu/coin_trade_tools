@@ -8,14 +8,19 @@
 用法：python merge_rank_files.py
 """
 
-import os, json
+import os, json, sys
 from datetime import datetime
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from config import RUSTNOTE_WEEX_RANK_FILE
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 output_dir = os.path.normpath(os.path.join(script_dir, "..", "output"))
 
-# 固定文件
-rust_file = r"D:\WorkMachine\GitRespository\RustNote\coin_trade\record_dir\xt_coin_log\log\ready_update\current_run_symbol\weex_symbol_rank_2026_06_30__08_25_47_194377.txt"
+rust_file = RUSTNOTE_WEEX_RANK_FILE
+if not rust_file:
+    print("未配置 RUSTNOTE_WEEX_RANK_FILE 环境变量")
+    exit(1)
 
 # 找到 test_scripts/output 中最新的 weex_filter_symbol_rank_data_*.txt
 files = [f for f in os.listdir(output_dir) if f.startswith("weex_filter_symbol_rank_data_") and f.endswith(".txt")]

@@ -10,6 +10,7 @@ from datetime import datetime, timezone, timedelta
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from config import PROXY, ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE, ALLOW_EXECUTE_SQL
+from utils import Utils
 
 
 def fetch_weex_metadata(proxy=None):
@@ -71,7 +72,7 @@ def main():
     data = fetch_weex_metadata()
     if data is None:
         print("失败")
-        return
+        sys.exit(1)
 
     # 保存
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -137,9 +138,7 @@ def main():
         rank_file = os.path.join(parent_out, "weex_filter_symbol_rank_data.jsonc")
         rank_symbols = set()
         if os.path.isfile(rank_file):
-            with open(rank_file, "r", encoding="utf-8") as f:
-                rank_lines = [l for l in f if not l.strip().startswith("//")]
-            rank_data = json.loads("".join(rank_lines))
+            rank_data = Utils.load_jsonc(rank_file)
             rank_symbols = {item["symbol"] for item in rank_data}
             print(f"  rank 文件中有 {len(rank_symbols)} 个 symbol")
         else:
@@ -179,7 +178,11 @@ def update_symbol_coin_code_to_db(contract_list):
     """
     from db import connect_mysql_db, DB_TYPE_HOST_DDBB
 
-    conn, cursor = connect_mysql_db(DB_TYPE_HOST_DDBB)
+    try:
+        conn, cursor = connect_mysql_db(DB_TYPE_HOST_DDBB)
+    except Exception as e:
+        print(f"[DB ERROR] 无法连接数据库: {e}")
+        sys.exit(1)
 
     try:
         # 查询已有 WEEX 交易对
@@ -200,6 +203,8 @@ def update_symbol_coin_code_to_db(contract_list):
             symbol_name = item.get("symbol_name")
             symbol_code = item.get("symbol_code")
             symbol_01 = item.get("symbol_01", "")  # 如 "BTC/USDT"
+            symbol_name_sql = Utils.sql_escape(symbol_name)
+            symbol_code_sql = Utils.sql_escape(symbol_code)
 
             if not symbol_name or not symbol_code:
                 continue
@@ -211,7 +216,7 @@ def update_symbol_coin_code_to_db(contract_list):
                 # 已存在 → 更新 f_coin_code
                 f_id = symbol_db_map[symbol_name]
                 sql_str = "update t_symbol_info set f_coin_code = '{}' where f_id = {};".format(
-                    symbol_code, f_id
+                    symbol_code_sql, f_id
                 )
             else:
                 # 不存在 → 插入新记录
@@ -220,7 +225,7 @@ def update_symbol_coin_code_to_db(contract_list):
                     "(f_platf_name, f_symbol, f_coin_code, f_coin_scale, "
                     "f_min_ajust_base_value, f_price_float_count, f_set_amount_ratio, f_latest_price) "
                     "values ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');"
-                ).format("WEEX", symbol_name, symbol_code, "1.0", "1.0", "", "", "")
+                ).format("WEEX", symbol_name_sql, symbol_code_sql, "1.0", "1.0", "", "", "")
 
             sql_lines.append(f"[{symbol_name}] {sql_str}")
             if ALLOW_EXECUTE_SQL:

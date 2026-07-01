@@ -11,15 +11,20 @@
 用法：python merge_db_files.py
 """
 
-import os, re
+import os, re, sys
 from datetime import datetime
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from config import RUSTNOTE_ORDER_REC_FILE
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sql_dir = os.path.normpath(os.path.join(script_dir, "..", "test_weex_20260628_ticker", "output"))
 parent_output = os.path.normpath(os.path.join(script_dir, "..", "output"))
 
-# 固定输入文件
-txt_file = r"D:\WorkMachine\GitRespository\RustNote\coin_trade\record_dir\xt_coin_log\log\ready_update\order_rec_dir\details\33.txt"
+txt_file = RUSTNOTE_ORDER_REC_FILE
+if not txt_file:
+    print("未配置 RUSTNOTE_ORDER_REC_FILE 环境变量")
+    exit(1)
 
 
 def find_latest(base_dir, prefix):

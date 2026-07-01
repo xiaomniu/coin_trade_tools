@@ -103,7 +103,8 @@ def main():
 
     parsed = fetch_binance_24hr_ticker(symbol)
     if parsed is None:
-        print("失败"); return
+        print("失败")
+        sys.exit(1)
 
     url_full = f"https://www.binance.com/fapi/v1/ticker/24hr?symbol={label}"
 

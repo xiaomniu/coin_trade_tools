@@ -16,6 +16,7 @@ build/
 Thumbs.db
 
 # Temp / logs / output should not be tracked
+.env
 test_scripts/temp/
 test_scripts/output/
 test_scripts/logs/

@@ -65,6 +65,27 @@ test_scripts/
 | `db.py` | `connect_mysql_db()` 数据库连接 |
 | `utils.py` | `Utils` 类，`format_float()` 等静态方法 |
 
+## 🔧 依赖
+
+```bash
+pip install -r requirements.txt
+```
+
+## 🔐 环境变量
+
+`config.py` 会先读取项目根目录 `.env`，再读取系统环境变量；如果两边都配置，系统环境变量优先。代理和开关有默认值；数据库连接和 RustNote 对比文件路径需要按需配置：
+
+| 变量 | 说明 |
+|------|------|
+| `TRADE_TOOLS_PROXY` | HTTP/HTTPS 代理地址 |
+| `TRADE_TOOLS_DDBB_HOST` / `TRADE_TOOLS_DDBB_USER` / `TRADE_TOOLS_DDBB_PASSWORD` / `TRADE_TOOLS_DDBB_DATABASE` / `TRADE_TOOLS_DDBB_PORT` | DDBB 数据库连接 |
+| `TRADE_TOOLS_PLOYEOS_HOST` / `TRADE_TOOLS_PLOYEOS_USER` / `TRADE_TOOLS_PLOYEOS_PASSWORD` / `TRADE_TOOLS_PLOYEOS_DATABASE` / `TRADE_TOOLS_PLOYEOS_PORT` | PLOYEOS 数据库连接 |
+| `RUSTNOTE_WEEX_RANK_FILE` | `weex_merge_rank_files.py` 使用的 RustNote rank 文件 |
+| `RUSTNOTE_ORDER_REC_FILE` | `weex_merge_db_files.py` 使用的 RustNote order_rec 文件 |
+| `ENABLE_DB_UPDATE_ONLY_SYMBOL_CODE` | 是否启用 `fetch_weex_metadata.py` 的 symbol_code 数据库更新 |
+| `ENABLE_CLEAN_ROOT_OUTPUT` | 是否允许 `clean_all_output.py` 清理公共 `output/logs` |
+| `ALLOW_EXECUTE_SQL` | 是否实际执行 SQL |
+
 ## 📝 约定
 - 每个测试模块在 `test_scripts/` 下独立建目录
 - 输出文件放入对应模块的 `output/`，文件名带平台前缀和时间戳

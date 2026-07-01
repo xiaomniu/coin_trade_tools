@@ -19,9 +19,7 @@ from utils import Utils
 
 
 def load_jsonc(filepath):
-    with open(filepath, "r", encoding="utf-8") as f:
-        lines = [l for l in f if not l.strip().startswith("//")]
-    return json.loads("".join(lines))
+    return Utils.load_jsonc(filepath)
 
 
 def main():
@@ -37,7 +35,7 @@ def main():
     data_file = os.path.join(data_output_dir, "weex_filter_symbol_rank_data.jsonc")
     if not os.path.isfile(data_file):
         print(f"文件不存在: {data_file}")
-        return
+        sys.exit(1)
 
     rank_data = load_jsonc(data_file)
     print(f"读取到 {len(rank_data)} 条数据")
@@ -54,7 +52,11 @@ def main():
         "Broccoli": "Broccoli714Usdt",
     }
 
-    conn, cursor = connect_mysql_db(DB_TYPE_HOST_DDBB)
+    try:
+        conn, cursor = connect_mysql_db(DB_TYPE_HOST_DDBB)
+    except Exception as e:
+        print(f"[DB ERROR] 无法连接数据库: {e}")
+        sys.exit(1)
 
     sql_lines = []
     update_count = 0
@@ -241,6 +243,38 @@ def main():
 
             db_key = f_a_symbol.lower()
 
+            f_binance_symbol_sql = Utils.sql_escape(f_binance_symbol)
+            f_ref_platf_type_sql = Utils.sql_escape(f_ref_platf_type)
+            platf_name_sql = Utils.sql_escape(platf_name)
+            f_a_coin_type_sql = Utils.sql_escape(f_a_coin_type)
+            f_a_symbol_sql = Utils.sql_escape(f_a_symbol)
+            f_a_leverage_sql = Utils.sql_escape(f_a_leverage)
+            f_amount_platf_a_random_sql = Utils.sql_escape(f_amount_platf_a_random)
+            f_platf_open_limit_order_price_offset_sql = Utils.sql_escape(f_platf_open_limit_order_price_offset)
+            f_platf_close_limit_order_price_offset_sql = Utils.sql_escape(f_platf_close_limit_order_price_offset)
+            f_in_time_long_price_dif_sql = Utils.sql_escape(f_in_time_long_price_dif)
+            f_in_time_short_price_dif_sql = Utils.sql_escape(f_in_time_short_price_dif)
+            f_open_long_price_dif_sql = Utils.sql_escape(f_open_long_price_dif)
+            f_open_short_price_dif_sql = Utils.sql_escape(f_open_short_price_dif)
+            f_open_long_take_profit_price_reback_dif_sql = Utils.sql_escape(f_open_long_take_profit_price_reback_dif)
+            f_open_short_take_profit_price_reback_dif_sql = Utils.sql_escape(f_open_short_take_profit_price_reback_dif)
+            f_order_stop_loss_price_dif_platf_a_sql = Utils.sql_escape(f_order_stop_loss_price_dif_platf_a)
+            f_order_stop_loss_price_dif_platf_b_sql = Utils.sql_escape(f_order_stop_loss_price_dif_platf_b)
+            f_open_long_nor_price_dif_sql = Utils.sql_escape(f_open_long_nor_price_dif)
+            f_open_long_rev_price_dif_sql = Utils.sql_escape(f_open_long_rev_price_dif)
+            f_close_long_price_dif_sql = Utils.sql_escape(f_close_long_price_dif)
+            f_close_long_rev_price_dif_sql = Utils.sql_escape(f_close_long_rev_price_dif)
+            f_open_short_nor_price_dif_sql = Utils.sql_escape(f_open_short_nor_price_dif)
+            f_open_short_rev_price_dif_sql = Utils.sql_escape(f_open_short_rev_price_dif)
+            f_close_short_price_dif_sql = Utils.sql_escape(f_close_short_price_dif)
+            f_close_short_rev_price_dif_sql = Utils.sql_escape(f_close_short_rev_price_dif)
+            f_calc_price_in_time_sql = Utils.sql_escape(f_calc_price_in_time)
+            f_calc_price_in_time_count_sql = Utils.sql_escape(f_calc_price_in_time_count)
+            f_min_ajust_base_value_sql = Utils.sql_escape(f_min_ajust_base_value)
+            f_price_float_count_sql = Utils.sql_escape(f_price_float_count)
+            f_set_amount_ratio_sql = Utils.sql_escape(f_set_amount_ratio_str)
+            f_close_all_order_price_min_sql = Utils.sql_escape(f_close_all_order_price_min)
+
             if db_key in symbol_db_map:
                 f_id = symbol_db_map[db_key]
                 sql_str = (
@@ -262,21 +296,21 @@ def main():
                     "f_set_amount_ratio = '{}', f_close_all_order_price_min = '{}' "
                     "where f_id = {};"
                 ).format(
-                    f_binance_symbol, f_ref_platf_type,
-                    platf_name, f_a_coin_type, f_a_symbol, f_a_leverage,
-                    f_amount_platf_a_random,
-                    f_platf_open_limit_order_price_offset, f_platf_close_limit_order_price_offset,
-                    f_in_time_long_price_dif, f_in_time_short_price_dif,
-                    f_open_long_price_dif, f_open_short_price_dif,
-                    f_open_long_take_profit_price_reback_dif, f_open_short_take_profit_price_reback_dif,
-                    f_order_stop_loss_price_dif_platf_a, f_order_stop_loss_price_dif_platf_b,
-                    f_open_long_nor_price_dif, f_open_long_rev_price_dif,
-                    f_close_long_price_dif, f_close_long_rev_price_dif,
-                    f_open_short_nor_price_dif, f_open_short_rev_price_dif,
-                    f_close_short_price_dif, f_close_short_rev_price_dif,
-                    f_calc_price_in_time, f_calc_price_in_time_count,
-                    f_min_ajust_base_value, f_price_float_count,
-                    f_set_amount_ratio_str, f_close_all_order_price_min,
+                    f_binance_symbol_sql, f_ref_platf_type_sql,
+                    platf_name_sql, f_a_coin_type_sql, f_a_symbol_sql, f_a_leverage_sql,
+                    f_amount_platf_a_random_sql,
+                    f_platf_open_limit_order_price_offset_sql, f_platf_close_limit_order_price_offset_sql,
+                    f_in_time_long_price_dif_sql, f_in_time_short_price_dif_sql,
+                    f_open_long_price_dif_sql, f_open_short_price_dif_sql,
+                    f_open_long_take_profit_price_reback_dif_sql, f_open_short_take_profit_price_reback_dif_sql,
+                    f_order_stop_loss_price_dif_platf_a_sql, f_order_stop_loss_price_dif_platf_b_sql,
+                    f_open_long_nor_price_dif_sql, f_open_long_rev_price_dif_sql,
+                    f_close_long_price_dif_sql, f_close_long_rev_price_dif_sql,
+                    f_open_short_nor_price_dif_sql, f_open_short_rev_price_dif_sql,
+                    f_close_short_price_dif_sql, f_close_short_rev_price_dif_sql,
+                    f_calc_price_in_time_sql, f_calc_price_in_time_count_sql,
+                    f_min_ajust_base_value_sql, f_price_float_count_sql,
+                    f_set_amount_ratio_sql, f_close_all_order_price_min_sql,
                     f_id
                 )
                 update_count += 1
@@ -314,20 +348,20 @@ def main():
                     "'{}', '{}'"
                     ");"
                 ).format(
-                    f_binance_symbol, f_ref_platf_type,
-                    platf_name, f_a_coin_type, f_a_symbol, f_a_leverage, f_amount_platf_a_random,
-                    f_platf_open_limit_order_price_offset, f_platf_close_limit_order_price_offset,
-                    f_in_time_long_price_dif, f_in_time_short_price_dif,
-                    f_open_long_price_dif, f_open_short_price_dif,
-                    f_open_long_take_profit_price_reback_dif, f_open_short_take_profit_price_reback_dif,
-                    f_order_stop_loss_price_dif_platf_a, f_order_stop_loss_price_dif_platf_b,
-                    f_open_long_nor_price_dif, f_open_long_rev_price_dif,
-                    f_close_long_price_dif, f_close_long_rev_price_dif,
-                    f_open_short_nor_price_dif, f_open_short_rev_price_dif,
-                    f_close_short_price_dif, f_close_short_rev_price_dif,
-                    f_calc_price_in_time, f_calc_price_in_time_count,
-                    f_min_ajust_base_value, f_price_float_count,
-                    f_set_amount_ratio_str, f_close_all_order_price_min
+                    f_binance_symbol_sql, f_ref_platf_type_sql,
+                    platf_name_sql, f_a_coin_type_sql, f_a_symbol_sql, f_a_leverage_sql, f_amount_platf_a_random_sql,
+                    f_platf_open_limit_order_price_offset_sql, f_platf_close_limit_order_price_offset_sql,
+                    f_in_time_long_price_dif_sql, f_in_time_short_price_dif_sql,
+                    f_open_long_price_dif_sql, f_open_short_price_dif_sql,
+                    f_open_long_take_profit_price_reback_dif_sql, f_open_short_take_profit_price_reback_dif_sql,
+                    f_order_stop_loss_price_dif_platf_a_sql, f_order_stop_loss_price_dif_platf_b_sql,
+                    f_open_long_nor_price_dif_sql, f_open_long_rev_price_dif_sql,
+                    f_close_long_price_dif_sql, f_close_long_rev_price_dif_sql,
+                    f_open_short_nor_price_dif_sql, f_open_short_rev_price_dif_sql,
+                    f_close_short_price_dif_sql, f_close_short_rev_price_dif_sql,
+                    f_calc_price_in_time_sql, f_calc_price_in_time_count_sql,
+                    f_min_ajust_base_value_sql, f_price_float_count_sql,
+                    f_set_amount_ratio_sql, f_close_all_order_price_min_sql
                 )
                 insert_count += 1
 
@@ -369,7 +403,7 @@ def main():
         f.write("\n".join(header + sql_lines))
 
     print(f"\n[SQL日志] {fp_sql}")
-    print("\n提示: 需要执行时取消 cursor.execute() 和 conn.commit() 的注释即可。")
+    print("\n提示: 需要实际执行 SQL 时，将环境变量 ALLOW_EXECUTE_SQL 设置为 true。")
 
 
 if __name__ == "__main__":

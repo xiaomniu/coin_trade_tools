@@ -32,6 +32,13 @@ def connect_mysql_db(in_db_type: str):
         raise ValueError(f"未知的数据库类型: {in_db_type}，可选: {list(DB_CONFIG.keys())}")
 
     cfg = DB_CONFIG[in_db_type]
+    missing = [key for key in ("host", "user", "password", "database") if not cfg.get(key)]
+    if missing:
+        raise ValueError(
+            f"{in_db_type} 数据库配置缺失: {', '.join(missing)}。"
+            "请通过 TRADE_TOOLS_* 环境变量配置后再执行数据库脚本。"
+        )
+
     conn = pymysql.connect(
         host=cfg["host"],
         user=cfg["user"],

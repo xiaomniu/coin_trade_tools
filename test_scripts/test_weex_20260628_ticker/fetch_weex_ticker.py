@@ -121,7 +121,7 @@ def main():
     parsed = fetch_weex_24hr_ticker(symbol)
     if parsed is None:
         print("失败")
-        return
+        sys.exit(1)
 
     url_full = f"https://api-contract.weex.com/capi/v3/market/ticker/24hr?symbol={label}"
 
